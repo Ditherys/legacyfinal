@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/dashboard-data", "destination": "/api/dashboard-data.js" }
+  ]
+}
