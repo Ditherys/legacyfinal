@@ -1,4 +1,9 @@
 {
   "framework": null,
-  "outputDirectory": "public"
+  "outputDirectory": "public",
+  "functions": {
+    "api/dashboard-data.js": {
+      "runtime": "nodejs20.x"
+    }
+  }
 }
