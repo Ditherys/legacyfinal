@@ -1,7 +1,4 @@
 {
   "framework": null,
-  "outputDirectory": "public",
-  "rewrites": [
-    { "source": "/api/dashboard-data", "destination": "/api/dashboard-data.js" }
-  ]
+  "outputDirectory": "public"
 }
