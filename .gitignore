@@ -1,0 +1,10 @@
+node_modules/
+.vercel/
+.env.local
+
+# Google service account credential files — never commit these
+root-bricolage-494814-e1-2327d7da3d0c.json
+service-account.json
+credentials.json
+google-service-account.json
+*.serviceaccount.json

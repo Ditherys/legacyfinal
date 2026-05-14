@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Legacy KPI Dashboard</title>
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./config.js"></script>
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <div aria-live="polite" aria-atomic="true" id="status-announcer" class="sr-only"></div>
+    
+    <div class="app-shell">
+      <aside class="sidebar">
+        <section class="brand-panel">
+          <div class="brand-lockup">
+            <div class="brand-mark">
+              <img src="./favicon.png" alt="Legacy Rehabilitation & Living" />
+            </div>
+            <div>
+              <p class="eyebrow">Legacy Dashboard</p>
+              <h2>Performance KPI</h2>
+            </div>
+          </div>
+        </section>
+
+        <section class="sidebar-panel" id="legendPanel">
+          <p class="panel-label">KPI Legend</p>
+          <div id="scoreGuideLegend" class="legend-list"></div>
+        </section>
+
+        <section class="sidebar-panel">
+          <p class="panel-label">Data Status</p>
+          <h3 id="dataStatus">Loading KPI Raw...</h3>
+          <p id="dataSourceNote">Preparing dashboard.</p>
+        </section>
+      </aside>
+
+      <main class="main-content" id="main-content">
+        <header class="page-header">
+          <div class="header-brand-shell">
+            <div class="header-logo-slot">
+              <img src="./favicon.png" alt="Legacy Rehabilitation & Living" class="header-logo" />
+            </div>
+            <div class="header-brand-copy">
+              <span class="header-brand-kicker">KPI Dashboard</span>
+              <h1>Legacy Performance Overview</h1>
+              <p id="periodSummary" class="scope-summary">Loading latest KPI period.</p>
+              <div class="dashboard-focus-switch" role="tablist" aria-label="Dashboard KPI focus">
+                <button class="dashboard-focus-button is-active" data-focus="overall" type="button" role="tab" aria-selected="true">All</button>
+                <button class="dashboard-focus-button" data-focus="transfer" type="button" role="tab" aria-selected="false">Transfer</button>
+                <button class="dashboard-focus-button" data-focus="admission" type="button" role="tab" aria-selected="false">Admission</button>
+                <button class="dashboard-focus-button" data-focus="aht" type="button" role="tab" aria-selected="false">AHT</button>
+                <button class="dashboard-focus-button" data-focus="vob" type="button" role="tab" aria-selected="false">VOB</button>
+                <button class="dashboard-focus-button" data-focus="attendance" type="button" role="tab" aria-selected="false">Attendance</button>
+                <button class="dashboard-focus-button" data-focus="quality" type="button" role="tab" aria-selected="false">Quality</button>
+                <button class="dashboard-focus-button" data-focus="agentstats" type="button" role="tab" aria-selected="false">Agent Stats</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="header-meta">
+            <div class="meta-pill">
+              <span class="meta-label">Latest Update</span>
+              <strong id="latestUpdated">--</strong>
+            </div>
+            <div class="meta-pill">
+              <span class="meta-label">Active Scope</span>
+              <strong id="activeScope">--</strong>
+            </div>
+            <div class="meta-pill">
+              <span class="meta-label">Last Synced</span>
+              <strong id="lastSynced">--</strong>
+            </div>
+            <button id="refreshData" class="refresh-button" type="button" aria-label="Refresh dashboard data">
+              <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 4v6h-6"></path>
+                <path d="M1 20v-6h6"></path>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+              <span class="refresh-label">Refresh</span>
+            </button>
+          </div>
+        </header>
+
+        <section id="summaryGrid" class="summary-grid" aria-label="KPI summary"></section>
+
+        <section id="emptyState" class="empty-state-page hidden" aria-live="polite"></section>
+
+        <section class="content-grid content-grid-wide" id="trendSection">
+          <article class="chart-card card chart-card-wide">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Trend View</p>
+                <h3 id="trendChartTitle">Score Trend</h3>
+                <p class="chart-subnote">Month-over-month movement for the active KPI.</p>
+              </div>
+            </div>
+            <div id="trendChart" class="chart-surface" aria-label="Trend chart" role="img"></div>
+          </article>
+        </section>
+
+        <section class="content-grid" id="chartsSection">
+          <article class="chart-card card">
+            <div class="section-heading">
+              <div>
+              <p class="eyebrow">Primary Chart</p>
+                <h3 id="primaryChartTitle">Team Snapshot</h3>
+                <p class="chart-subnote" id="primaryChartSubnote">Average score by KPI for the active scope.</p>
+              </div>
+            </div>
+            <div id="primaryChart" class="chart-surface" aria-label="Primary KPI chart" role="img"></div>
+          </article>
+
+          <article class="chart-card card">
+            <div class="section-heading">
+              <div>
+              <p class="eyebrow">Secondary Chart</p>
+                <h3 id="secondaryChartTitle">Score Distribution</h3>
+                <p class="chart-subnote" id="secondaryChartSubnote">Current rows grouped by rounded overall score.</p>
+              </div>
+            </div>
+            <div id="secondaryChart" class="chart-surface" aria-label="Secondary KPI chart" role="img"></div>
+          </article>
+        </section>
+
+        <!-- Single-agent radar chart (Overall tab + specific agent selected) -->
+        <section class="content-grid content-grid-wide hidden" id="radarSection">
+          <article class="chart-card card chart-card-wide">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Agent Profile</p>
+                <h3 id="radarTitle">KPI Radar</h3>
+                <p class="chart-subnote">Score across all 6 KPI dimensions for the selected agent.</p>
+              </div>
+              <button id="printScorecard" class="secondary-button" type="button">&#x1F5A8; Print Scorecard</button>
+            </div>
+            <div id="radarChart" class="chart-surface radar-chart-surface" aria-label="Agent KPI radar chart" role="img"></div>
+          </article>
+        </section>
+
+        <!-- Combined secondary chart with top/bottom for individual KPI tabs -->
+        <section class="secondary-combined-grid" id="secondaryCombinedSection">
+          <article class="chart-card card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Secondary Chart</p>
+                <h3 id="secondaryChartTitleAlt">Score Distribution</h3>
+                <p class="chart-subnote" id="secondaryChartSubnoteAlt">Current rows grouped by rounded score.</p>
+              </div>
+            </div>
+            <div id="secondaryChartAlt" class="chart-surface" aria-label="Secondary KPI chart" role="img"></div>
+          </article>
+
+          <article class="chart-card card compact-chart-card">
+            <div class="section-heading section-heading-compact">
+              <div>
+                <p class="eyebrow">Compact View</p>
+                <h3 id="topBottomTitleAlt">Top / Bottom Agents</h3>
+              </div>
+            </div>
+            <div id="topBottomChartAlt" class="chart-surface chart-surface-compact" aria-label="Top and bottom agents" role="img"></div>
+          </article>
+        </section>
+
+        <section class="compact-insights-grid" id="compactInsightsSection">
+          <article class="chart-card card compact-chart-card" id="topBottomCard">
+            <div class="section-heading section-heading-compact">
+              <div>
+                <p class="eyebrow">Compact View</p>
+                <h3 id="topBottomTitle">Top / Bottom Agents</h3>
+              </div>
+            </div>
+            <div id="topBottomChart" class="chart-surface chart-surface-compact" aria-label="Top and bottom agents" role="img"></div>
+          </article>
+
+          <article class="chart-card card compact-chart-card" id="ahtComponentsCard">
+            <div class="section-heading section-heading-compact">
+              <div>
+                <p class="eyebrow">Compact View</p>
+                <h3>AHT Components</h3>
+                <p class="chart-subnote">Talk and hold totals for the active scope.</p>
+              </div>
+            </div>
+            <div id="ahtComponentsChart" class="chart-surface chart-surface-compact" aria-label="AHT components" role="img"></div>
+          </article>
+
+          <article class="chart-card card compact-chart-card" id="callsVolumeCard">
+            <div class="section-heading section-heading-compact">
+              <div>
+                <p class="eyebrow">Compact View</p>
+                <h3>Calls Volume Snapshot</h3>
+              </div>
+            </div>
+            <div id="callsVolumeChart" class="chart-surface chart-surface-compact" aria-label="Calls volume snapshot" role="img"></div>
+          </article>
+
+          <article class="chart-card card compact-chart-card compact-chart-card-wide" id="compositionCard">
+            <div class="section-heading section-heading-compact">
+              <div>
+                <p class="eyebrow">Compact View</p>
+                <h3>KPI Composition</h3>
+              </div>
+            </div>
+            <div id="compositionChart" class="chart-surface chart-surface-compact" aria-label="KPI composition" role="img"></div>
+          </article>
+        </section>
+
+        <section class="content-grid content-grid-wide" id="heatmapSection">
+          <article class="chart-card card chart-card-wide">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Heatmap</p>
+                <h3>Agent Performance Heatmap</h3>
+                <p class="chart-subnote">Overall KPI score per agent per month. Darker green = higher score.</p>
+              </div>
+            </div>
+            <div id="heatmapChart" class="chart-surface" aria-label="Agent performance heatmap" role="img"></div>
+          </article>
+        </section>
+
+        <section class="top-filters card" id="filtersSection">
+          <div class="section-heading section-heading-compact">
+            <div>
+              <p class="eyebrow">Filters</p>
+              <p class="scope-summary">Update the active period and agent scope.</p>
+            </div>
+            <button id="resetFilters" class="secondary-button" type="button">Reset Filters</button>
+          </div>
+          <div class="top-filters-grid">
+            <label class="filter-field">
+              <span class="filter-title">Year</span>
+              <select id="yearFilter"></select>
+            </label>
+            <div class="filter-field filter-field-period">
+              <span class="filter-title">Month</span>
+              <div class="period-nav">
+                <button id="prevMonth" class="period-nav-btn" type="button" aria-label="Previous month">&#8249;</button>
+                <select id="monthFilter"></select>
+                <button id="nextMonth" class="period-nav-btn" type="button" aria-label="Next month">&#8250;</button>
+              </div>
+            </div>
+            <label class="filter-field">
+              <span class="filter-title">Agent</span>
+              <select id="agentFilter"></select>
+            </label>
+          </div>
+          <div class="filter-chips-row">
+            <button id="flaggedFilterBtn" class="filter-chip" type="button" aria-pressed="false">
+              <span class="flag-icon">⚑</span> Show Flagged Only
+              <span id="flaggedCount" class="filter-chip-count hidden">0</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="table-card card" id="tableSection">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Results</p>
+              <h3 id="tableTitle">KPI Raw Scorecards</h3>
+              <p class="chart-subnote" id="tableSubnote">Filtered KPI results from Google Sheets.</p>
+            </div>
+            <div class="table-meta">
+              <span id="resultsCount">0 rows</span>
+              <button id="columnToggle" class="secondary-button" type="button" aria-expanded="false" aria-controls="columnPanel">Columns</button>
+              <button id="exportCsv" class="secondary-button" type="button">Export CSV</button>
+            </div>
+            <div id="columnPanel" class="column-panel hidden" role="group" aria-label="Toggle table columns"></div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr id="tableHeadRow">
+                  <th>Rank</th>
+                  <th>Agent</th>
+                  <th>Overall</th>
+                  <th>Attendance</th>
+                  <th>Quality</th>
+                  <th>Calls</th>
+                  <th>Transfer Rate</th>
+                  <th>Admission Rate</th>
+                  <th>VOB Rate</th>
+                  <th>AHT</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-card card hidden" id="agentStatsSection">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Agent Stats</p>
+              <h3>Philippine Caller Agent Statistics</h3>
+              <p class="chart-subnote" id="agentStatsSubnote">Detailed agent performance statistics from Google Sheets.</p>
+            </div>
+            <div class="table-meta">
+              <span id="agentStatsCount">0 rows</span>
+              <button id="exportAgentStatsCsv" class="secondary-button" type="button">Export CSV</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr id="agentStatsHeadRow"></tr>
+              </thead>
+              <tbody id="agentStatsBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <nav id="stickyTabBar" class="sticky-tab-bar" aria-label="Dashboard KPI focus">
+      <div class="sticky-tab-bar-inner">
+        <span id="stickyPeriod" class="sticky-period-label"></span>
+        <div class="sticky-focus-switch">
+          <button class="sticky-focus-button is-active" data-sticky-focus="overall"  type="button">All</button>
+          <button class="sticky-focus-button" data-sticky-focus="transfer"   type="button">Transfer</button>
+          <button class="sticky-focus-button" data-sticky-focus="admission"  type="button">Admission</button>
+          <button class="sticky-focus-button" data-sticky-focus="aht"        type="button">AHT</button>
+          <button class="sticky-focus-button" data-sticky-focus="vob"        type="button">VOB</button>
+          <button class="sticky-focus-button" data-sticky-focus="attendance" type="button">Attendance</button>
+          <button class="sticky-focus-button" data-sticky-focus="quality"    type="button">Quality</button>
+          <button class="sticky-focus-button" data-sticky-focus="agentstats" type="button">Agent Stats</button>
+        </div>
+      </div>
+    </nav>
+  </body>
+</html>
